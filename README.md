@@ -17,16 +17,6 @@ Each subdirectory is a self-contained, single-file website mockup built as part 
 └── <client>/index.html # One mockup per prospect
 ```
 
-## Current previews
-
-| Path | Business | Niche |
-|------|----------|-------|
-| `/kupchick/` | Kupchick Heating & Cooling | HVAC |
-| `/roofsmart/` | Roof Smart Home Improvement | Roofing |
-| `/bruces/` | Bruce's Landscaping Services | Landscaping / excavating |
-| `/lt/` | LT Landscaping & Masonry | Landscaping / masonry |
-| `/dm/` | D&M Landscaping | Landscape design |
-
 ## Conventions
 
 - **Single file per mockup** — inline CSS, no external JS, no external images (inline SVG + CSS gradients only; Google Fonts is the sole external dependency)
