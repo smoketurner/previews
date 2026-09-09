@@ -427,6 +427,23 @@ footer{background:var(--forest-deep);color:rgba(247,243,234,.65);padding:64px 0 
       (function () {
         var f = document.getElementById('estimate-form');
         var status = document.getElementById('form-status');
+
+        // Personalized outreach link (?k=<signed token>): greet the prospect,
+        // prefill what we already know, and tell the service they looked.
+        var token = new URLSearchParams(location.search).get('k');
+        if (token) {
+          var hidden = document.createElement('input');
+          hidden.type = 'hidden'; hidden.name = 'k'; hidden.value = token;
+          f.appendChild(hidden);
+          try {
+            var claims = JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/')));
+            if (claims.n && !document.getElementById('fn').value) document.getElementById('fn').value = claims.n;
+            if (claims.e && !document.getElementById('em').value) document.getElementById('em').value = claims.e;
+          } catch (e) { /* unreadable token: leave the form blank */ }
+          fetch('https://forms.smoketurner.com/v/dm?k=' + encodeURIComponent(token),
+                { mode: 'cors', keepalive: true }).catch(function () {});
+        }
+
         f.addEventListener('submit', function (e) {
           e.preventDefault();
           var btn = f.querySelector('button[type=submit]');
