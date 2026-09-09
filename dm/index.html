@@ -418,9 +418,11 @@ footer{background:var(--forest-deep);color:rgba(247,243,234,.65);padding:64px 0 
         </div>
         <div class="field"><label for="msg">Tell us about your project</label><textarea id="msg" name="message" placeholder="A little about your property and what you have in mind…" required></textarea></div>
         <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Company website<input name="company_website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="cf-turnstile" data-sitekey="TURNSTILE_SITEKEY" data-theme="light" style="margin:4px 0 14px"></div>
         <button class="btn btn-gold" type="submit">Send My Request</button>
         <p class="form-fine" id="form-status">Free estimates · No obligation · We respond promptly</p>
       </form>
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       <script>
       (function () {
         var f = document.getElementById('estimate-form');
@@ -434,14 +436,17 @@ footer{background:var(--forest-deep);color:rgba(247,243,234,.65);padding:64px 0 
             .then(function (res) {
               if (res.ok && res.b.ok) {
                 f.reset();
+                if (window.turnstile) { window.turnstile.reset(); }
                 status.textContent = 'Thank you — we received your request and will be in touch shortly.';
               } else {
                 status.textContent = (res.b && res.b.error) ? res.b.error : 'Something went wrong. Please call us instead.';
+                if (window.turnstile) { window.turnstile.reset(); }
                 btn.disabled = false;
               }
             })
             .catch(function () {
               status.textContent = 'Could not send. Please call us at (203) 255-0803.';
+              if (window.turnstile) { window.turnstile.reset(); }
               btn.disabled = false;
             });
         });
