@@ -401,25 +401,52 @@ footer{background:var(--forest-deep);color:rgba(247,243,234,.65);padding:64px 0 
           </div>
         </div>
       </div>
-      <form class="est-form" onsubmit="return false">
+      <form class="est-form" id="estimate-form" method="post" action="https://forms.smoketurner.com/f/dm">
         <h3>Request Your Free Estimate</h3>
         <div class="two-col">
-          <div class="field"><label for="fn">Name</label><input id="fn" type="text" placeholder="Jane Smith"></div>
-          <div class="field"><label for="ph">Phone</label><input id="ph" type="tel" placeholder="(203) 555-0123"></div>
+          <div class="field"><label for="fn">Name</label><input id="fn" name="name" type="text" placeholder="Jane Smith" required></div>
+          <div class="field"><label for="ph">Phone</label><input id="ph" name="phone" type="tel" placeholder="(203) 555-0123"></div>
         </div>
         <div class="two-col">
-          <div class="field"><label for="em">Email</label><input id="em" type="email" placeholder="jane@example.com"></div>
+          <div class="field"><label for="em">Email</label><input id="em" name="email" type="email" placeholder="jane@example.com"></div>
           <div class="field"><label for="tw">Town</label>
-            <select id="tw"><option>Fairfield</option><option>Westport</option><option>Greenwich</option><option>Darien</option><option>Other</option></select>
+            <select id="tw" name="town"><option>Fairfield</option><option>Westport</option><option>Greenwich</option><option>Darien</option><option>Other</option></select>
           </div>
         </div>
         <div class="field"><label for="sv">Service Interested In</label>
-          <select id="sv"><option>Landscape Design</option><option>Property Maintenance</option><option>Plantings</option><option>Lawn Care</option><option>Seasonal Services</option><option>Not sure yet</option></select>
+          <select id="sv" name="service"><option>Landscape Design</option><option>Property Maintenance</option><option>Plantings</option><option>Lawn Care</option><option>Seasonal Services</option><option>Not sure yet</option></select>
         </div>
-        <div class="field"><label for="msg">Tell us about your project</label><textarea id="msg" placeholder="A little about your property and what you have in mind…"></textarea></div>
+        <div class="field"><label for="msg">Tell us about your project</label><textarea id="msg" name="message" placeholder="A little about your property and what you have in mind…" required></textarea></div>
+        <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Company website<input name="company_website" tabindex="-1" autocomplete="off"></label></div>
         <button class="btn btn-gold" type="submit">Send My Request</button>
-        <p class="form-fine">Free estimates · No obligation · We respond promptly</p>
+        <p class="form-fine" id="form-status">Free estimates · No obligation · We respond promptly</p>
       </form>
+      <script>
+      (function () {
+        var f = document.getElementById('estimate-form');
+        var status = document.getElementById('form-status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = f.querySelector('button[type=submit]');
+          btn.disabled = true; status.textContent = 'Sending…';
+          fetch(f.action, { method: 'POST', body: new FormData(f) })
+            .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, b: b }; }); })
+            .then(function (res) {
+              if (res.ok && res.b.ok) {
+                f.reset();
+                status.textContent = 'Thank you — we received your request and will be in touch shortly.';
+              } else {
+                status.textContent = (res.b && res.b.error) ? res.b.error : 'Something went wrong. Please call us instead.';
+                btn.disabled = false;
+              }
+            })
+            .catch(function () {
+              status.textContent = 'Could not send. Please call us at (203) 255-0803.';
+              btn.disabled = false;
+            });
+        });
+      })();
+      </script>
     </div>
   </div>
 </section>
